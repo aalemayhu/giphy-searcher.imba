@@ -1,30 +1,37 @@
+tag GiphySearcher
 
-var store = {
-	title: ""
-	items: [
-		{title: "git clone hello-world-imba", completed: false}
-		{title: "npm install", completed: false}
-		{title: "npm run dev", completed: false}
-		{title: "play around", completed: false}
-	]
-}
+	prop query default: ""
+	prop apiKey default: "sXLcqvSTNNIrGaufrME9Eeap5tY2Jka6"
 
-tag App
-	def addItem
-		data:items.push(title: data:title)
-		data:title = ""
+	def setup
+		@images = ["https://media.giphy.com/media/13gvXfEVlxQjDO/giphy.gif"]
+		await search()
 
-	def completeItem item
-		console.log "clicked,{item:completed}"
-		item:completed = !item:completed
+	def search
+		const q = query.trim
 		
+		console.log "q:length -> "
+		if q:length < 3
+			return
+		
+		const api = "https://api.giphy.com/v1/gifs/search?q={q}&api_key={apiKey}"		
+		const data = await window.fetch(api)
+		const j = await data.json()
+		const entries = []
+		for image in j:data
+			entries.push(image:images:original:url)
+		@images = entries
+			
 	def render
-		<self.vbox>
+		<self>
 			<header>
-				<input[data:title] placeholder="New..." :keyup.enter.addItem>
-				<button :tap.addItem> 'Add item'
-			<ul> for item in data:items
-				<li .completed=item:completed :tap.completeItem(item)> item:title
+				<h1> "Giphy Searcher"
+			<div.main>
+				<div.searchbar>
+					<input.search[query] :keydown.search placeholder="Please enter, atleast three characters to search">
+				<div.images>
+					for i in @images
+						<img src="{i}">						
+				
 
-
-Imba.mount <App[store]>
+Imba.mount <GiphySearcher>
