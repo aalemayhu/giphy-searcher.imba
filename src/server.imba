@@ -6,7 +6,7 @@ server.use(express.static('./dist'))
 server.get '/' do |req,res|
 	var html = <html>
 		<head>
-			<title> "Imba - Hello World"
+			<title> "Giphy Searcher"
 			<meta charset="utf-8">
 			<link rel="stylesheet" href="/index.css" media="screen">
 		<body>
